@@ -50,6 +50,10 @@ gcloud sql instances create $GCP_INSTANCE \
     --tier db-f1-micro \
     --region $GCP_REGION
 
+gcloud sql users set-password postgres \
+--instance=$GCP_INSTANCE \
+--password=postgres
+
 gcloud sql databases create $GCP_DB_NAME \
     --instance $GCP_INSTANCE
 
@@ -167,6 +171,8 @@ rob-laptop
 ### check if can access DB directly
 ```
 gcloud sql connect $GCP_INSTANCE --database $GCP_DB_NAME --user=$GCP_DB_USER --quiet
+
+gcloud sql connect $GCP_INSTANCE --database $GCP_DB_NAME --user=postgres --quiet
 
 --
 password:
@@ -290,49 +296,49 @@ pfolio-db-0	 > pfolio-db-0.dmp
 
 ```
 
-## re-deploy
-```
-gcloud app deploy
-
-```
-
-
-
 # pgadmin
 
-## Create pgadmin dir
+## [pgAdmin 4 (APT)](https://www.pgadmin.org/download/pgadmin-4-apt/)
 ```
-mkdir <project root>/pgadmin
-cd !$
+#
+# Setup the repository
+#
+
+# Install the public key for the repository (if not done previously):
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
+
+# Create the repository configuration file:
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+
+#
+# Install pgAdmin
+#
+
+# Install for both desktop and web modes:
+sudo apt install pgadmin4
+
+# Install for desktop mode only:
+sudo apt install pgadmin4-desktop
+
+# Install for web mode only: 
+sudo apt install pgadmin4-web 
+
+# Configure the webserver, if you installed pgadmin4-web:
+sudo /usr/pgadmin4/bin/setup-web.sh
+
 ```
 
-## Dockerfile
-Create
+# invoke pgadmin4
 ```
-FROM dpage/pgadmin4
+http://localhost/pgadmin4
+--
+rob.lockhart@yahoo.co.uk
+postgres
+--
 
-ENV PGADMIN_DEFAULT_EMAIL=rob.lockhart@yahoo.co.uk
-
-ENV PGADMIN_DEFAULT_PASSWORD=havana111965
-
-ENV PGADMIN_LISTEN_PORT=8080
 ```
 
-
-Builld
-```
-gcloud builds submit --tag=gcr.io/heidless-pfolio-deploy-4/pgadmin4
-```
-
-Deploy
-```
-gcloud run deploy --image=gcr.io/heidless-pfolio-deploy-4/pgadmin4 --platform=managed
-```
-
-## Access
-https://pgadmin4-um4b6gn3cq-nw.a.run.app
-
-## [Connecting to GCP’s Cloud SQL (PostgresSQL) from PgAdmin — 3 simple steps](https://cshiva.medium.com/connecting-to-gcps-cloud-sql-postgressql-from-pgadmin-3-simple-steps-2f4530488a4c)
+## Backup
 
 ## [pgAdmin Backup Database in PostgreSQL Simplified 101](https://hevodata.com/learn/pgadmin-backup-database/#11)
 
@@ -343,7 +349,144 @@ https://pgadmin4-um4b6gn3cq-nw.a.run.app
 #### LOGIN CREDENTIALS (See contents of Dockerfile)
 
 ## access locally
-http://127.0.0.1/pgadmin4
+http://localhost/pgadmin4
+
+- ### [Backup Dialog](https://www.pgadmin.org/docs/pgadmin4/8.4/backup_dialog.html#:~:text=You%20can%20backup%20a%20single,in%20the%20dialog%20title%20bar.)
+
+```
+
+```
+
+- ## restore backup
+
+
+# [PostgreSQL 15 : Install](https://www.server-world.info/en/note?os=Ubuntu_23.04&p=postgresql&f=1)
+
+- ### [PostGres:upgrade-script](https://salsa.debian.org/postgresql/postgresql-common/raw/master/pgdg/apt.postgresql.org.sh)
+
+```
+sudo apt update
+
+sudo apt install postgresql
+
+```
+
+
+
+
+
+
+
+
+
+
+## Create pgadmin dir
+
+### [Deploy PGAdmin4 to Google Cloud Run](https://medium.com/@kobby.fletcher/deploy-pgadmin4-to-google-cloud-run-a5e5988784fb)
+
+```
+mkdir <project root>/pgadmin
+cd !$
+```
+
+## Dockerfile
+Create & initialise login credentials
+```
+FROM dpage/pgadmin4
+
+ENV PGADMIN_DEFAULT_EMAIL=rob.lockhart@yahoo.co.uk
+
+ENV PGADMIN_DEFAULT_PASSWORD=havana111965
+
+ENV PGADMIN_LISTEN_PORT=8080
+```
+
+Builld
+```
+gcloud builds submit --tag=gcr.io/pfolio-0/pgadmin4 .
+
+```
+
+Deploy
+```
+gcloud run deploy --image=gcr.io/pfolio-0/pgadmin4 --platform=managed
+
+```
+
+## Access
+https://pgadmin4-um4b6gn3cq-nw.a.run.app
+
+--- 
+
+## configure server
+
+Servers->Register->Deploy Cloud Instance
+```
+Google Cloud SQL
+```
+
+POSTGRES_15
+pfolio-0-instance-0
+pfolio-0-db-0
+pfolio-0-user-0
+Havana111965
+
+- ### [Setting up OAuth 2.0](https://support.google.com/cloud/answer/6158849?hl=en#userconsent&zippy=%2Cuser-consent%2Cpublic-and-internal-applications)
+
+
+
+
+
+## [Connecting to GCP’s Cloud SQL (PostgresSQL) from PgAdmin — 3 simple steps](https://cshiva.medium.com/connecting-to-gcps-cloud-sql-postgressql-from-pgadmin-3-simple-steps-2f4530488a4c)
+
+- ## Step 1: Set-up GCP and Create Database instance & Database on GCP
+    - ### [Manage users with built-in authentication](https://cloud.google.com/sql/docs/mysql/create-manage-users)
+```
+gcloud sql users set-password postgres \
+--instance=$GCP_INSTANCE \
+--password=postgres
+
+```
+
+- ## STEP 2: Install PgAdmin on your computer
+```
+Download from: 
+https://www.pgadmin.org/download/
+```
+
+- ## STEP 3: Connect to Database Instance from PgAdmin
+```
+https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
+
+docker pull dpage/pgadmin4:latest
+
+docker run -p 8000:8000 \
+    -e 'PGADMIN_DEFAULT_EMAIL=rob.lockhart@yahoo.co.uk' \
+    -e 'PGADMIN_DEFAULT_PASSWORD=password' \
+    -d dpage/pgadmin4
+
+
+# intialize detail password file
+touch .passwd
+
+# define environment var
+export PGADMIN_DEFAULT_EMAIL=rob.lockhart@yahoo.co.uk
+export PGADMIN_DEFAULT_PASSWORD=password
+export PGADMIN_DEFAULT_PASSWORD_FILE=./.passwd
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
 
 # phpMyAdmin
 https://cloud.google.com/sql/docs/mysql/phpmyadmin-on-app-engine
@@ -356,10 +499,6 @@ CREATE USER arjuna11 WITH SUPERUSER PASSWORD 'havana11';
 \l
 \du
 \q
-
-
-
-
 
 
 
