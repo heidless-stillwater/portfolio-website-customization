@@ -99,7 +99,7 @@ Storage Admin
 /home/heidless/projects/backend-live/app/config
 
 ---
-export GCP_CREDENTIALS=pfolio-0-d8fe64938af3.json
+export GCP_CREDENTIALS=pfolio-0-e947087b6cfe.json
 
 ---
 

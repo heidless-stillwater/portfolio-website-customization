@@ -183,7 +183,7 @@ from google.oauth2 import service_account
 # storage
 
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.path.join(BASE_DIR, 'config/pfolio-0-d8fe64938af3.json')
+    os.path.join(BASE_DIR, 'config/pfolio-0-e947087b6cfe.json')
 )
 
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
