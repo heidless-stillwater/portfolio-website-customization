@@ -1,0 +1,10 @@
+runtime: python39
+env: standard
+entrypoint: gunicorn -b :$PORT config.wsgi:application
+
+handlers:
+- url: /.*
+  script: auto
+
+runtime_config:
+  python_version: 3
