@@ -1,5 +1,7 @@
 
 
+########################### NVM #################################
+
 # NVM install
 ```
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
@@ -10,29 +12,14 @@ nvm install 21.7.3
 
 ```
 
+##################### project init ##############################
+
 # gae deploy
 
 ## ENV Settings
 source ./config/.env-vars
 source ./.env-vars
 
-<!-- 
-```
-GCP_PROJECT=pfolio-0
-GCP_REGION=europe-west2
-
-GCP_DB_VERSION=POSTGRES_15
-GCP_INSTANCE=$GCP_PROJECT-instance-0
-GCP_DB_NAME=$GCP_PROJECT-db-0
-GCP_DB_USER=$GCP_PROJECT-user-0
-GCP_USER_PWD=Havana111965
-GCP_DB_URL=postgres://$GCP_DB_USER:Havana111965@//cloudsql/$GCP_PROJECT:europe-west2:$GCP_INSTANCE/$GCP_DB_NAME
-
-GCP_BUCKET=$GCP_PROJECT-bucket
-GCP_SECRET_SETTINGS=$GCP_PROJECT-secret
-GCP_SVC_ACCOUNT=$GCP_PROJECT@appspot.gserviceaccount.com
-
-``` -->
 
 ## configure gae
 ```
@@ -42,6 +29,9 @@ gcloud init
 gcloud app create
 
 ```
+
+######################### DB config #############################
+
 #### initialise DB Instance (takes some time  - take a break and let it process)
 ```
 gcloud sql instances create $GCP_INSTANCE \
@@ -65,6 +55,8 @@ gcloud sql users create $GCP_DB_USER \
 gcloud sql instances describe --project $GCP_PROJECT $GCP_INSTANCE
 
 ```
+########################### bucket ##############################
+
 
 ## storage bucket
 ```
@@ -72,6 +64,8 @@ gcloud sql instances describe --project $GCP_PROJECT $GCP_INSTANCE
 gsutil mb -l europe-west2 gs://$GCP_BUCKET
 
 ```
+
+####################### service account #########################
 
 ### service account(s)
 ```
@@ -93,6 +87,8 @@ Storage Admin
 --
 ```
 
+################### credentials - key file ######################
+
 ### generate & install KEY file
 ```
 'IAM & ADMIN'->Service Accounts->'3 dots'->Manage Keys
@@ -106,8 +102,9 @@ Storage Admin
 export GCP_CREDENTIALS=pfolio-0-e947087b6cfe.json
 
 ---
-
 ```
+
+########################### secrets #############################
 
 ## secrets setup
 ```
@@ -153,7 +150,6 @@ gcloud secrets versions access latest --secret $GCP_SECRET_SETTINGS && echo ""
 ### disable local settings to force use of Google Secrets
 ```
 mv config/.env config/.env-gcp
-
 mv .env .env-gcp
 
 
@@ -191,6 +187,8 @@ export CLOUDRUN_SERVICE_URL=https://$GCP_SVC_ACCOUNT -->
 
 ```
 
+###################### cloud proxy ##############################
+
 ### enable cloud proxy
 ```
 cd config
@@ -211,6 +209,7 @@ sudo lsof -i -P -n | grep LISTEN
 kill -9 <PID>
 
 ```
+############################# run local ##############################
 
 ### init & run backend
 ```
@@ -237,6 +236,8 @@ http://localhost:8080
 http://localhost:8080/admin
 ```
 
+########################### deploy ##############################
+
 ## Deploy the app to the App Engine standard environment
 
 ```
@@ -244,57 +245,16 @@ http://localhost:8080/admin
 app.yaml
 
 --
-
 ```
 
-################################################
+
 ## deploy to app engine
 ```
 gcloud app deploy
 
 ```
 
-## display APP URL
-```
-gcloud app describe --format "value(defaultHostname)"
---
-https://heidless-pfolio-deploy-9.nw.r.appspot.com
-
---
-
-```
-
-## monitor logs
-```
-gcloud app logs tail -s default
--
-target url: https://pfolio-backend-2.ew.r.appspot.com
-target service account: pfolio-backend-2@appspot.gserviceaccount.com
--
-
-```
-
-## Open app.yaml and update the value of APPENGINE_URL with your deployed URL:
-```
-vi app.yaml
---
-env_variables:
-	APPENGINE_URL: https://pfolio-backend-2.ew.r.appspot.com/
-
---
-
-```
-
-## BACKUPS
-```
-pg_dump \
--U pfolio-user-0	 \
---format=custom \
---no-owner \
---no-acl \
-pfolio-db-0	 > pfolio-db-0.dmp
-
-```
+########################### pg admin ############################
 
 # pgadmin
 
@@ -338,6 +298,84 @@ postgres
 
 ```
 
+## set postgres password 
+gcloud sql users set-password postgres \
+--instance=$GCP_INSTANCE \
+--password=postgres
+
+## configure pgadmin server
+
+```
+# ensure proxy is running
+# PORT is 1234
+Servers->Register->Deploy Cloud Instance
+
+# General
+name: pfolio-0-gcp
+
+# Connection
+Hostname: localhost
+Port: 1234
+Maintenance DB: postgres
+Username: postgres
+Password: postgres
+
+```
+
+#################################################################
+
+
+
+
+## display APP URL
+```
+gcloud app describe --format "value(defaultHostname)"
+--
+https://heidless-pfolio-deploy-9.nw.r.appspot.com
+
+--
+
+```
+
+## monitor logs
+```
+gcloud app logs tail -s default
+-
+target url: https://pfolio-backend-2.ew.r.appspot.com
+target service account: pfolio-backend-2@appspot.gserviceaccount.com
+-
+
+```
+
+## Open app.yaml and update the value of APPENGINE_URL with your deployed URL:
+```
+vi app.yaml
+--
+env_variables:
+	APPENGINE_URL: https://pfolio-backend-2.ew.r.appspot.com/
+
+--
+
+```
+
+## BACKUPS
+```
+pg_dump \
+-U pfolio-user-0	 \
+--format=custom \
+--no-owner \
+--no-acl \
+pfolio-db-0	 > pfolio-db-0.dmp
+
+```
+
+
+
+
+
+
+
+
 ## Backup
 
 ## [pgAdmin Backup Database in PostgreSQL Simplified 101](https://hevodata.com/learn/pgadmin-backup-database/#11)
@@ -350,6 +388,11 @@ postgres
 
 ## access locally
 http://localhost/pgadmin4
+
+
+
+
+
 
 - ### [Backup Dialog](https://www.pgadmin.org/docs/pgadmin4/8.4/backup_dialog.html#:~:text=You%20can%20backup%20a%20single,in%20the%20dialog%20title%20bar.)
 
