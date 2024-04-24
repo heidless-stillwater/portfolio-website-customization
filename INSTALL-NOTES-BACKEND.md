@@ -77,7 +77,7 @@ pfolio-0@appspot.gserviceaccount.com
 --
 
 edit principal
--
+--
 
 # add ROLES to allow access to DB & 'secrets'
 --
@@ -254,9 +254,28 @@ gcloud app deploy
 
 ```
 
+## display APP URL
+```
+gcloud app describe --format "value(defaultHostname)"
+--
+https://heidless-pfolio-deploy-9.nw.r.appspot.com
+
+--
+
+```
+
+## monitor logs
+```
+gcloud app logs tail -s default
+-
+target url: https://pfolio-backend-2.ew.r.appspot.com
+target service account: pfolio-backend-2@appspot.gserviceaccount.com
+-
+
+```
+
 ########################### pg admin ############################
 
-# pgadmin
 
 ## [pgAdmin 4 (APT)](https://www.pgadmin.org/download/pgadmin-4-apt/)
 ```
@@ -288,7 +307,7 @@ sudo /usr/pgadmin4/bin/setup-web.sh
 
 ```
 
-# invoke pgadmin4
+## invoke pgadmin4
 ```
 http://localhost/pgadmin4
 --
@@ -297,14 +316,12 @@ postgres
 --
 
 ```
-
 ## set postgres password 
 gcloud sql users set-password postgres \
 --instance=$GCP_INSTANCE \
 --password=postgres
 
 ## configure pgadmin server
-
 ```
 # ensure proxy is running
 # PORT is 1234
@@ -316,58 +333,17 @@ name: pfolio-0-gcp
 # Connection
 Hostname: localhost
 Port: 1234
-Maintenance DB: postgres
-Username: postgres
-Password: postgres
+Maintenance DB: pfolio-0-db-0
+Username: pfolio-0-user-0
+Password: Havana111965
 
 ```
 
-#################################################################
 
 
 
 
-## display APP URL
-```
-gcloud app describe --format "value(defaultHostname)"
---
-https://heidless-pfolio-deploy-9.nw.r.appspot.com
 
---
-
-```
-
-## monitor logs
-```
-gcloud app logs tail -s default
--
-target url: https://pfolio-backend-2.ew.r.appspot.com
-target service account: pfolio-backend-2@appspot.gserviceaccount.com
--
-
-```
-
-## Open app.yaml and update the value of APPENGINE_URL with your deployed URL:
-```
-vi app.yaml
---
-env_variables:
-	APPENGINE_URL: https://pfolio-backend-2.ew.r.appspot.com/
-
---
-
-```
-
-## BACKUPS
-```
-pg_dump \
--U pfolio-user-0	 \
---format=custom \
---no-owner \
---no-acl \
-pfolio-db-0	 > pfolio-db-0.dmp
-
-```
 
 
 
