@@ -195,7 +195,7 @@ cd config
 
 # init proxy
 cd config
-curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.6.1/cloud-sql-proxy.linux.amd64
+#curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.6.1/cloud-sql-proxy.linux.amd64
 
 chmod 777 cloud-sql-proxy
 
@@ -209,6 +209,7 @@ sudo lsof -i -P -n | grep LISTEN
 kill -9 <PID>
 
 ```
+
 ############################# run local ##############################
 
 ### init & run backend
