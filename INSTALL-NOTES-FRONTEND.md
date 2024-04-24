@@ -3,8 +3,10 @@
 ############################################
 # ENV
 ```
-GCP_PROJECT=pfolio-0
-GCP_APP_NAME=pfolio-frontend-0
+#GCP_PROJECT=pfolio-0
+GCP_PROJECT=pfolio-1
+
+GCP_APP_NAME=pfolio-frontend-1
 GCP_BUCKET=$GCP_PROJECT-bucket
 
 ```
@@ -38,6 +40,13 @@ https://console.cloud.google.com/run?referrer=search&cloudshell=false&project=he
 ```
 
 # link to app
+```
+# pfolio-0
 https://pfolio-frontend-v2xr7nz45q-nw.a.run.app/
 
+
+# pfolio-1
+https://pfolio-frontend-1-abtfpjmana-nw.a.run.app
+
+```
 

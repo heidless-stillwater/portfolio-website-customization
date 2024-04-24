@@ -1,4 +1,4 @@
-pfolio-0*.json
+pfolio*.json
 *venv*
 *.pyc
 .env
