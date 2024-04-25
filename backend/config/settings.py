@@ -27,7 +27,7 @@ elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
     print(f'Using Google SECRETS:{project_id}')
     
     client = secretmanager.SecretManagerServiceClient()
-    settings_name = os.environ.get('SETTINGS_NAME', 'pfolio-0-secret')
+    settings_name = os.environ.get('SETTINGS_NAME', 'pfolio-3-secret')
     name = f'projects/{project_id}/secrets/{settings_name}/versions/latest'
     payload = client.access_secret_version(name=name).payload.data.decode('UTF-8')
 
@@ -183,12 +183,12 @@ from google.oauth2 import service_account
 # storage
 
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.path.join(BASE_DIR, 'config/pfolio-0-e947087b6cfe.json')
+    os.path.join(BASE_DIR, 'config/pfolio-3-bf9b63bdc839.json')
 )
 
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 
-GS_BUCKET_NAME = 'pfolio-0-bucket'
+GS_BUCKET_NAME = 'pfolio-3-bucket'
 
 STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 

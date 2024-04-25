@@ -4,9 +4,12 @@
 # ENV
 ```
 #GCP_PROJECT=pfolio-0
-GCP_PROJECT=pfolio-1
+#GCP_PROJECT=pfolio-1
+#GCP_PROJECT=pfolio-2
 
-GCP_APP_NAME=pfolio-frontend-1
+GCP_PROJECT=pfolio-3
+
+GCP_APP_NAME=pfolio-frontend-0
 GCP_BUCKET=$GCP_PROJECT-bucket
 
 ```
@@ -17,10 +20,14 @@ docker build . -t $GCP_APP_NAME
 docker run -p 3000:3000 -e=PORT=3000 $GCP_APP_NAME
 ```
 
+# initialse gCloud
+gcloud init
+
+
 ## storage bucket
 ```
 # initialise BUCKET
-#gsutil mb -l europe-west2 gs://$GCP_BUCKET
+gsutil mb -l europe-west2 gs://$GCP_BUCKET
 
 ```
 
@@ -28,15 +35,8 @@ docker run -p 3000:3000 -e=PORT=3000 $GCP_APP_NAME
 ```
 gcloud builds submit --tag gcr.io/$GCP_PROJECT/$GCP_APP_NAME .
 
-## create Serice
--> deploy uploaded Container Registry
--> i.e  NOT continuous deployment
+gcloud run deploy $GCP_APP_NAME-svc --image gcr.io/$GCP_PROJECT/$GCP_APP_NAME
 
-https://console.cloud.google.com/run?referrer=search&cloudshell=false&project=heidless-pfolio-deploy-9
--
-'create service'
-
--
 ```
 
 # link to app
