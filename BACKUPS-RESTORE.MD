@@ -283,12 +283,14 @@ export CLOUDRUN_SERVICE_URL=https://$GCP_SVC_ACCOUNT -->
 
 # Restore BACKUP
 
+
 ## files
 ```
 cd ./backend/BACKUPS/24-4-2024/pfolio-0-bucket
 gsutil cp -r . gs://pfolio-1-bucket
 
 ```
+
 
 ## db - RESTORE from BACKUP
 ```
@@ -312,6 +314,11 @@ role name: pfolio-0-user-0
 --
 
 ```
+
+
+## restore to different project
+- [Restore an instance](https://cloud.google.com/sql/docs/mysql/backup-recovery/restoring)
+
 
 ## deploy to app engine
 ```
