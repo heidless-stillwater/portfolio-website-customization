@@ -1,4 +1,7 @@
 
+#[Export and import using SQL dump files](https://cloud.google.com/sql/docs/postgres/import-export/import-export-sql)
+
+
 ## [pdadmin4](http://localhost/pgadmin4/browser/)
 ```
 rob.lockhart@yahoo.co.uk
@@ -16,15 +19,11 @@ gsutil cp -r gs://pfolio-2-bucket .
 ```
 
 ## export DB instance
-
-## import/restore DB
 ```
 gcloud sql instances describe pfolio-2-instance-0 | grep serviceAccountEmailAddress
 --
 serviceAccountEmailAddress:
 p434737793407-tfz9r3@gcp-sa-cloud-sql.iam.gserviceaccount.com
---
-
 --
 
 gsutil iam ch serviceAccount:p434737793407-tfz9r3@gcp-sa-cloud-sql.iam.gserviceaccount.com:objectAdmin \
@@ -36,7 +35,33 @@ gcloud sql export sql pfolio-2-instance-0 gs://pfolio-2-bucket/backups/pfolio-2-
 
 # download: e.g. to 'backend/BACKUPS/25-4-2024/pfolio-2-sqldumpfile.gz'
 
-  
+```
+
+## restore DB
+```
+gcloud sql instances describe pfolio-3-instance-0 | grep serviceAccountEmailAddress
+--
+p1062613647764-xwmj8w@gcp-sa-cloud-sql.iam.gserviceaccount.com
+
+--
+
+gsutil iam ch serviceAccount:p1062613647764-xwmj8w@gcp-sa-cloud-sql.iam.gserviceaccount.com:objectAdmin \
+gs://pfolio-3-bucket
+
+# upload backup file to storage bucket
+cd backend/BACKUPS/25-4-2024/pfolio-2/db-export
+gsutil cp -r *.gz gs://pfolio-3-bucket/backups 
+
+gcloud sql import sql pfolio-3-instance-0 gs://pfolio-3-bucket/backups/backups_pfolio-2-sqldumpfile.gz \
+--database=pfolio-3-db-0
+
+
+
+
+```
+
+
+
 
 
 
